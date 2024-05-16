@@ -15,4 +15,6 @@ pickle-mixin
 sqlalchemy
 transformers
 sentencepiece
+g2pk
+jamo
 ortools==9.10.4067
