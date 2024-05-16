@@ -29,3 +29,15 @@ This project originated from a small program that I did to improve my own pronun
 
 ## Disclaimer 
 This is a simple project that I made in my free time with the goal to be useful to some people. It is not perfect, thus be aware that some small bugs may be present. In case you find something is not working, all feedback is welcome, and issues may be addressed depending on their severity.
+
+## Docker
+
+### Build Docker image
+```
+docker build -t ai-pronunciation-trainer .
+```
+
+### Run Docker container
+```
+docker run -d -p 3000:3000 ai-pronunciation-trainer
+```
