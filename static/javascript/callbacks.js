@@ -336,57 +336,58 @@ const startMediaDevice = () => {
                     body: JSON.stringify({ "title": currentText[0], "base64Audio": audioBase64, "language": AILanguage }),
                     headers: { "X-Api-Key": STScoreAPIKey }
 
-                }).then(res => res.json()).
-                    then(data => {
+                }).then(res => {
+                    return res.json();
+                }).then(data => {
+                    if (playAnswerSounds)
+                        playSoundForAnswerAccuracy(parseFloat(data.pronunciation_accuracy))
 
-                        if (playAnswerSounds)
-                            playSoundForAnswerAccuracy(parseFloat(data.pronunciation_accuracy))
+                    document.getElementById("recorded_ipa_script").innerHTML = "/ " + data.ipa_transcript + " /";
+                    document.getElementById("recordAudio").classList.add('disabled');
+                    document.getElementById("main_title").innerHTML = page_title;
+                    document.getElementById("pronunciation_accuracy").innerHTML = data.pronunciation_accuracy + "%";
 
-                        document.getElementById("recorded_ipa_script").innerHTML = "/ " + data.ipa_transcript + " /";
-                        document.getElementById("recordAudio").classList.add('disabled');
-                        document.getElementById("main_title").innerHTML = page_title;
-                        document.getElementById("pronunciation_accuracy").innerHTML = data.pronunciation_accuracy + "%";
-
-                        lettersOfWordAreCorrect = data.is_letter_correct_all_words.split(" ")
-
-
-                        startTime = data.start_time;
-                        endTime = data.end_time;
+                    lettersOfWordAreCorrect = data.is_letter_correct_all_words.split(" ")
 
 
-                        real_transcripts_ipa = data.real_transcripts_ipa.split(" ")
-                        matched_transcripts_ipa = data.matched_transcripts_ipa.split(" ")
-                        wordCategories = data.pair_accuracy_category.split(" ")
-                        let currentTextWords = currentText[0].split(" ")
+                    startTime = data.start_time;
+                    endTime = data.end_time;
 
-                        coloredWords = "";
-                        for (let word_idx = 0; word_idx < currentTextWords.length; word_idx++) {
 
-                            wordTemp = '';
-                            for (let letter_idx = 0; letter_idx < currentTextWords[word_idx].length; letter_idx++) {
-                                letter_is_correct = lettersOfWordAreCorrect[word_idx][letter_idx] == '1'
-                                if (letter_is_correct)
-                                    color_letter = 'green'
-                                else
-                                    color_letter = 'red'
+                    real_transcripts_ipa = data.real_transcripts_ipa.split(" ")
+                    matched_transcripts_ipa = data.matched_transcripts_ipa.split(" ")
+                    wordCategories = data.pair_accuracy_category.split(" ")
+                    let currentTextWords = currentText[0].split(" ")
 
-                                wordTemp += '<font color=' + color_letter + '>' + currentTextWords[word_idx][letter_idx] + "</font>"
-                            }
-                            currentTextWords[word_idx]
-                            coloredWords += " " + wrapWordForIndividualPlayback(wordTemp, word_idx)
+                    coloredWords = "";
+                    for (let word_idx = 0; word_idx < currentTextWords.length; word_idx++) {
+
+                        wordTemp = '';
+                        for (let letter_idx = 0; letter_idx < currentTextWords[word_idx].length; letter_idx++) {
+                            letter_is_correct = lettersOfWordAreCorrect[word_idx][letter_idx] == '1'
+                            if (letter_is_correct)
+                                color_letter = 'green'
+                            else
+                                color_letter = 'red'
+
+                            wordTemp += '<font color=' + color_letter + '>' + currentTextWords[word_idx][letter_idx] + "</font>"
                         }
+                        currentTextWords[word_idx]
+                        coloredWords += " " + wrapWordForIndividualPlayback(wordTemp, word_idx)
+                    }
 
 
 
-                        document.getElementById("original_script").innerHTML = coloredWords
+                    document.getElementById("original_script").innerHTML = coloredWords
 
-                        currentSoundRecorded = true;
-                        unblockUI();
-                        document.getElementById("playRecordedAudio").classList.remove('disabled');
+                    currentSoundRecorded = true;
+                    unblockUI();
+                    document.getElementById("playRecordedAudio").classList.remove('disabled');
 
-                    });
+                });
             }
-            catch {
+            catch (e) {
+                console.log(e);
                 UIError();
             }
         };
